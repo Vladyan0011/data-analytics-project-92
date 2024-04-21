@@ -44,7 +44,7 @@ WITH tab AS (
 SELECT
 	CONCAT(emp.first_name, ' ', emp.last_name) AS seller,
 	to_char(s.sale_date, 'Day') AS day_of_week,
-	EXTRACT(DOW FROM s.sale_date) + 1 AS day_number,
+	EXTRACT(isodow FROM s.sale_date) AS day_number,
 	FLOOR(SUM(s.quantity * p.price)) AS income
 FROM sales AS s
 JOIN products AS p ON s.product_id = p.product_id

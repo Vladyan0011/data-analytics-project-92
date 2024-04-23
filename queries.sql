@@ -78,6 +78,7 @@ GROUP BY selling_month
 ORDER BY selling_month;
 
 --Find all customers who made first purchase with sale products
+--Find all customers who made first purchase with sale products
 WITH customers_purchases AS (
     SELECT
     	customers.customer_id,
@@ -88,16 +89,15 @@ WITH customers_purchases AS (
     	CONCAT(employees.first_name, ' ', employees.last_name) AS seller,
     	ROW_NUMBER()
     		OVER (PARTITION BY customers.customer_id ORDER BY sales.sale_date, products.price) AS row_number
-    	FROM sales
-    	JOIN products ON products.product_id = sales.sales_id 
-    	JOIN customers ON customers.customer_id = sales.customer_id
-    	JOIN employees ON sales.sales_person_id = employees.employee_id
-    	ORDER BY customers.customer_id, sales.sale_date, products.price
+    FROM sales
+    JOIN products ON products.product_id = sales.sales_id 
+    JOIN customers ON customers.customer_id = sales.customer_id
+    JOIN employees ON sales.sales_person_id = employees.employee_id
+    ORDER BY customers.customer_id, sales.sale_date, products.price
 )
-SELECT
+SELECT 
 	customer,
 	sale_date,
 	seller
 FROM customers_purchases
-WHERE row_number = 1 AND price = 0
-ORDER BY customer_id;
+WHERE row_number = 1 AND price = 0;

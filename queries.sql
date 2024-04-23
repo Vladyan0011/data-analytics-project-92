@@ -43,7 +43,7 @@ ORDER BY average_income;
 WITH tab AS (
 SELECT
 	CONCAT(emp.first_name, ' ', emp.last_name) AS seller,
-	to_char(s.sale_date, 'Day') AS day_of_week,
+	LOWER(to_char(s.sale_date, 'Day')) AS day_of_week,
 	EXTRACT(isodow FROM s.sale_date) AS day_number,
 	FLOOR(SUM(s.quantity * p.price)) AS income
 FROM sales AS s
@@ -59,7 +59,7 @@ ORDER BY day_number, seller;
 SELECT
 	CASE
 		WHEN c.age BETWEEN 16 AND 25 THEN '16-25'
-		WHEN c.age BETWEEN 26 AND 40 THEN '26-25'
+		WHEN c.age BETWEEN 26 AND 40 THEN '26-40'
 		WHEN c.age > 40 THEN '40+'
 	END AS age_category,
 	COUNT(*) AS age_count
@@ -70,7 +70,7 @@ ORDER BY age_category;
 -- Group income by month of purchase and unique customers
 SELECT
 	TO_CHAR(sales.sale_date, 'YYYY-MM') AS selling_month,
-	COUNT(DISTINCT sales.customer_id) AS customers,
+	COUNT(DISTINCT sales.customer_id) AS total_customers,
 	FLOOR(SUM(products.price * sales.quantity)) AS income
 FROM sales
 JOIN products ON products.product_id = sales.product_id 

@@ -1,20 +1,20 @@
---Запрос считает количество строк в таблице customers
+-- Запрос считает количество строк в таблице customers
 SELECT COUNT(*) AS customers_count
 FROM customers;
 
--- make a table with TOP-10 sellers 
+-- Создание таблицы с ТОП-10 продавцов 
 SELECT
-    CONCAT(emp.first_name, ' ', emp.last_name) AS seller,
+    CONCAT(emp.first_name,' ', emp.last_name) AS seller,
     COUNT(s.*) AS operations,
     FLOOR(SUM(p.price * s.quantity)) AS income
-FROM employees AS emp
-JOIN sales AS s ON s.sales_person_id = emp.employee_id 
+FROM sales AS s
+JOIN employees AS emp ON s.sales_person_id = emp.employee_id 
 JOIN products AS p ON p.product_id = s.product_id 
 GROUP BY seller
 ORDER BY SUM(p.price * s.quantity) DESC
 LIMIT 10;
 
--- Make a table with sellers and their operations
+-- Создание таблицы с продавцами и их операциями
 WITH sellers_stat AS (
 SELECT
     CONCAT(emp.first_name,' ', emp.last_name) AS seller,
@@ -26,12 +26,12 @@ JOIN products AS p ON p.product_id = s.product_id
 GROUP BY seller
 ORDER BY SUM(p.price * s.quantity) DESC
 ),
--- make a variable for total avg income
+-- Создание переменной для общего среднего дохода
 total_avg_income AS (
     SELECT FLOOR(AVG(income / operations)) AS total_average_income
     FROM sellers_stat
 )
--- choose sellers who has avg income per operation more total avg income per operation
+-- Выбор продавцов, у которых средний доход за операцию меньше общего среднего дохода за операцию
 SELECT
     seller,
     FLOOR(income / operations) AS average_income
@@ -39,7 +39,7 @@ FROM sellers_stat, total_avg_income AS ta
 WHERE FLOOR(income / operations) < ta.total_average_income
 ORDER BY average_income;
 
--- make a temp table with all needed data and ordering that in the main request
+-- Создание временной таблицы со всеми необходимыми данными и их упорядочивание в основном запросе
 WITH tab AS (
 SELECT
     CONCAT(emp.first_name, ' ', emp.last_name) AS seller,
@@ -55,7 +55,7 @@ SELECT seller, day_of_week, income
 FROM tab 
 ORDER BY day_number, seller;
 
---group all of customers by age groups
+-- Группировка всех клиентов по возрастным группам
 SELECT
     CASE
         WHEN c.age BETWEEN 16 AND 25 THEN '16-25'
@@ -67,7 +67,7 @@ FROM customers AS c
 GROUP BY age_category
 ORDER BY age_category;
 
--- group income by month of purchase and unique customers
+-- Группировка доходов по месяцам покупок и уникальным клиентам
 SELECT
     TO_CHAR(sales.sale_date, 'YYYY-MM') AS selling_month,
     COUNT(DISTINCT sales.customer_id) AS total_customers,
@@ -77,7 +77,7 @@ JOIN products ON products.product_id = sales.product_id
 GROUP BY selling_month
 ORDER BY selling_month;
 
---find all customers who made first purchase with sale products
+-- Поиск всех клиентов, совершивших первую покупку со скидочными продуктами
 WITH special_offer AS (
     SELECT 
         customers.customer_id,

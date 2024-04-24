@@ -4,11 +4,11 @@ FROM customers;
 
 -- make a table with TOP-10 sellers 
 SELECT
-    CONCAT(emp.first_name,' ', emp.last_name) AS seller,
+    CONCAT(emp.first_name, ' ', emp.last_name) AS seller,
     COUNT(s.*) AS operations,
     FLOOR(SUM(p.price * s.quantity)) AS income
-FROM sales AS s
-JOIN employees AS emp ON s.sales_person_id = emp.employee_id 
+FROM employees AS emp
+JOIN sales AS s ON s.sales_person_id = emp.employee_id 
 JOIN products AS p ON p.product_id = s.product_id 
 GROUP BY seller
 ORDER BY SUM(p.price * s.quantity) DESC

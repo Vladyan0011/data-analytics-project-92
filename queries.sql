@@ -8,7 +8,7 @@ SELECT
     COUNT(s.*) AS operations,
     FLOOR(SUM(p.price * s.quantity)) AS income
 FROM sales AS s
-JOIN employees AS emp ON s.sales_person_id = emp.employee_id 
+JOIN employees AS emp ON emp.employee_id = s.sales_person_id
 JOIN products AS p ON p.product_id = s.product_id 
 GROUP BY seller
 ORDER BY SUM(p.price * s.quantity) DESC

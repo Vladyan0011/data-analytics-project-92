@@ -8,8 +8,8 @@ SELECT
     COUNT(s.*) AS operations,
     FLOOR(SUM(p.price * s.quantity)) AS income
 FROM sales AS s
-JOIN employees AS emp ON s.sales_person_id = emp.employee_id
-JOIN products AS p ON s.product_id = p.product_id
+INNER JOIN employees AS emp ON s.sales_person_id = emp.employee_id
+INNER JOIN products AS p ON s.product_id = p.product_id
 GROUP BY seller
 ORDER BY SUM(p.price * s.quantity) DESC
 LIMIT 10;

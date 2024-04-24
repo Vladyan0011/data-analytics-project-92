@@ -88,12 +88,12 @@ ORDER BY selling_month;
 -- Поиск всех клиентов, совершивших первую покупку со скидочными продуктами
 WITH special_offer AS (
     SELECT
-        customers.customer_id,
         CONCAT(customers.first_name, ' ', customers.last_name) AS customer,
+        CONCAT(employees.first_name, ' ', employees.last_name) AS seller,
+        customers.customer_id,
         sales.sale_date AS sale_date,
         products.product_id AS product_id,
         products.price AS price,
-        CONCAT(employees.first_name, ' ', employees.last_name) AS seller,
         ROW_NUMBER()
             OVER (PARTITION BY customers.customer_id ORDER BY sale_date, price)
             AS row_number

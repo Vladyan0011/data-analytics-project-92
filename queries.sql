@@ -96,7 +96,7 @@ WITH special_offer AS (
         CONCAT(employees.first_name, ' ', employees.last_name) AS seller,
         ROW_NUMBER()
             OVER (PARTITION BY customers.customer_id ORDER BY sale_date, price)
-            AS row_number
+        AS row_number
     FROM customers
     INNER JOIN sales ON customers.customer_id = sales.customer_id
     INNER JOIN employees ON sales.sales_person_id = employees.employee_id

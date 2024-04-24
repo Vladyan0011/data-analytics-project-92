@@ -8,8 +8,8 @@ SELECT
     COUNT(s.*) AS operations,
     FLOOR(SUM(p.price * s.quantity)) AS income
 FROM sales AS s
-JOIN employees AS emp ON emp.employee_id = s.sales_person_id
-JOIN products AS p ON p.product_id = s.product_id 
+JOIN employees AS emp ON sales.sales_person_id = employees.employee_id
+JOIN products AS p ON sales.product_id = products.product_id
 GROUP BY seller
 ORDER BY SUM(p.price * s.quantity) DESC
 LIMIT 10;
@@ -21,17 +21,19 @@ WITH sellers_stat AS (
         COUNT(s.*) AS operations,
         FLOOR(SUM(p.price * s.quantity)) AS income
     FROM sales AS s
-    JOIN employees AS emp ON s.sales_person_id = emp.employee_id 
-    JOIN products AS p ON p.product_id = s.product_id 
+    JOIN employees AS emp ON sales.sales_person_id = employees.employee_id
+    JOIN products AS p ON sales.product_id = products.product_id
     GROUP BY seller
     ORDER BY SUM(p.price * s.quantity) DESC
 ),
+
 -- Создание переменной для общего среднего дохода
 total_avg_income AS (
     SELECT FLOOR(AVG(income / operations)) AS total_average_income
     FROM sellers_stat
 )
--- Выбор продавцов, у которых средний доход за операцию меньше общего среднего дохода за операцию
+-- Выбор продавцов, у которых средний доход за операцию 
+-- меньше общего среднего дохода за операцию
 SELECT
     seller,
     FLOOR(income / operations) AS average_income
@@ -39,7 +41,8 @@ FROM sellers_stat, total_avg_income AS ta
 WHERE FLOOR(income / operations) < ta.total_average_income
 ORDER BY average_income;
 
--- Создание временной таблицы со всеми необходимыми данными и их упорядочивание в основном запросе
+-- Создание временной таблицы со всеми необходимыми
+-- данными и их упорядочивание в основном запросе
 WITH tab AS (
     SELECT
         CONCAT(emp.first_name, ' ', emp.last_name) AS seller,

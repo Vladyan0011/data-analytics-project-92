@@ -21,8 +21,8 @@ WITH sellers_stat AS (
         COUNT(s.*) AS operations,
         FLOOR(SUM(p.price * s.quantity)) AS income
     FROM sales AS s
-    JOIN employees AS emp ON sales.sales_person_id = employees.employee_id
-    JOIN products AS p ON sales.product_id = products.product_id
+    INNER JOIN employees AS emp ON sales.sales_person_id = employees.employee_id
+    INNER JOIN products AS p ON sales.product_id = products.product_id
     GROUP BY seller
     ORDER BY SUM(p.price * s.quantity) DESC
 ),
@@ -51,8 +51,8 @@ WITH tab AS (
         EXTRACT(ISODOW FROM s.sale_date) AS day_number,
         FLOOR(SUM(s.quantity * p.price)) AS income
     FROM sales AS s
-    JOIN products AS p ON s.product_id = p.product_id
-    JOIN employees AS emp ON s.sales_person_id = emp.employee_id
+    INNER JOIN products AS p ON s.product_id = p.product_id
+    INNER JOIN employees AS emp ON s.sales_person_id = emp.employee_id
     GROUP BY seller, day_of_week, day_number
 )
 
@@ -81,7 +81,7 @@ SELECT
     COUNT(DISTINCT sales.customer_id) AS total_customers,
     FLOOR(SUM(products.price * sales.quantity)) AS income
 FROM sales
-JOIN products ON sales.product_id = products.product_id
+INNER JOIN products ON sales.product_id = products.product_id
 GROUP BY selling_month
 ORDER BY selling_month;
 
@@ -98,9 +98,9 @@ WITH special_offer AS (
             OVER (PARTITION BY customers.customer_id ORDER BY sale_date, price)
             AS row_number
     FROM customers
-    JOIN sales ON customers.customer_id = sales.customer_id
-    JOIN employees ON sales.sales_person_id = employees.employee_id
-    JOIN products ON sales.product_id = products.product_id
+    INNER JOIN sales ON customers.customer_id = sales.customer_id
+    INNER JOIN employees ON sales.sales_person_id = employees.employee_id
+    INNER JOIN products ON sales.product_id = products.product_id
     ORDER BY customers.customer_id
 )
 

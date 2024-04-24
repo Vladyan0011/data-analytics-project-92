@@ -52,11 +52,15 @@ WITH tab AS (
         FLOOR(SUM(s.quantity * p.price)) AS income
     FROM sales AS s
     JOIN products AS p ON s.product_id = p.product_id
-    JOIN employees AS emp ON emp.employee_id = s.sales_person_id
+    JOIN employees AS emp ON s.sales_person_id = emp.employee_id
     GROUP BY seller, day_of_week, day_number
 )
-SELECT seller, day_of_week, income
-FROM tab 
+
+SELECT 
+    seller,
+    day_of_week,
+    income
+FROM tab
 ORDER BY day_number, seller;
 
 -- Группировка всех клиентов по возрастным группам
@@ -77,7 +81,7 @@ SELECT
     COUNT(DISTINCT sales.customer_id) AS total_customers,
     FLOOR(SUM(products.price * sales.quantity)) AS income
 FROM sales
-JOIN products ON products.product_id = sales.product_id 
+JOIN products ON sales.product_id = products.product_id
 GROUP BY selling_month
 ORDER BY selling_month;
 
@@ -93,10 +97,11 @@ WITH special_offer AS (
         ROW_NUMBER() OVER (PARTITION BY customers.customer_id ORDER BY sale_date, price) AS row_number
     FROM customers
     JOIN sales ON customers.customer_id = sales.customer_id 
-    JOIN employees ON employees.employee_id = sales.sales_person_id 
-    JOIN products ON products.product_id = sales.product_id 
+    JOIN employees ON sales.sales_person_id = employees.employee_id
+    JOIN products ON sales.product_id = products.product_id
     ORDER BY customer_id
 )
+
 SELECT
     customer,
     sale_date,

@@ -4,7 +4,7 @@ FROM customers;
 
 -- Создание таблицы с ТОП-10 продавцов 
 SELECT
-    CONCAT(emp.first_name,' ', emp.last_name) AS seller,
+    CONCAT(emp.first_name, ' ', emp.last_name) AS seller,
     COUNT(s.*) AS operations,
     FLOOR(SUM(p.price * s.quantity)) AS income
 FROM sales AS s
@@ -16,15 +16,15 @@ LIMIT 10;
 
 -- Создание таблицы с продавцами и их операциями
 WITH sellers_stat AS (
-SELECT
-    CONCAT(emp.first_name,' ', emp.last_name) AS seller,
-    COUNT(s.*) AS operations,
-    FLOOR(SUM(p.price * s.quantity)) AS income
-FROM sales AS s
-JOIN employees AS emp ON s.sales_person_id = emp.employee_id 
-JOIN products AS p ON p.product_id = s.product_id 
-GROUP BY seller
-ORDER BY SUM(p.price * s.quantity) DESC
+    SELECT
+        CONCAT(emp.first_name, ' ', emp.last_name) AS seller,
+        COUNT(s.*) AS operations,
+        FLOOR(SUM(p.price * s.quantity)) AS income
+    FROM sales AS s
+    JOIN employees AS emp ON s.sales_person_id = emp.employee_id 
+    JOIN products AS p ON p.product_id = s.product_id 
+    GROUP BY seller
+    ORDER BY SUM(p.price * s.quantity) DESC
 ),
 -- Создание переменной для общего среднего дохода
 total_avg_income AS (
@@ -41,15 +41,15 @@ ORDER BY average_income;
 
 -- Создание временной таблицы со всеми необходимыми данными и их упорядочивание в основном запросе
 WITH tab AS (
-SELECT
-    CONCAT(emp.first_name, ' ', emp.last_name) AS seller,
-    LOWER(TO_CHAR(s.sale_date, 'Day')) AS day_of_week,
-    EXTRACT(ISODOW FROM s.sale_date) AS day_number,
-    FLOOR(SUM(s.quantity * p.price)) AS income
-FROM sales AS s
-JOIN products AS p ON s.product_id = p.product_id
-JOIN employees AS emp ON emp.employee_id = s.sales_person_id
-GROUP BY seller, day_of_week, day_number
+    SELECT
+        CONCAT(emp.first_name, ' ', emp.last_name) AS seller,
+        LOWER(TO_CHAR(s.sale_date, 'Day')) AS day_of_week,
+        EXTRACT(ISODOW FROM s.sale_date) AS day_number,
+        FLOOR(SUM(s.quantity * p.price)) AS income
+    FROM sales AS s
+    JOIN products AS p ON s.product_id = p.product_id
+    JOIN employees AS emp ON emp.employee_id = s.sales_person_id
+    GROUP BY seller, day_of_week, day_number
 )
 SELECT seller, day_of_week, income
 FROM tab 

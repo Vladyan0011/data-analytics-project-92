@@ -32,13 +32,14 @@ total_avg_income AS (
     SELECT FLOOR(AVG(income / operations)) AS total_average_income
     FROM sellers_stat
 )
+
 -- Выбор продавцов, у которых средний доход за операцию 
 -- меньше общего среднего дохода за операцию
 SELECT
-    seller,
-    FLOOR(income / operations) AS average_income
-FROM sellers_stat, total_avg_income AS ta
-WHERE FLOOR(income / operations) < ta.total_average_income
+    st.seller,
+    FLOOR(st.income / st.operations) AS average_income
+FROM sellers_stat AS st, total_avg_income AS ta
+WHERE FLOOR(st.income / st.operations) < ta.total_average_income
 ORDER BY average_income;
 
 -- Создание временной таблицы со всеми необходимыми
